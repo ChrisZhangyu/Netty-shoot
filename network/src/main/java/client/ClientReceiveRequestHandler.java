@@ -17,7 +17,6 @@ public class ClientReceiveRequestHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
         System.out.println(o);
 //        给本地网关发送请求
-        System.out.println("给网关发送请求");
         String host = "127.0.0.1";
         int port = 8333;
         Bootstrap bootstrap = new Bootstrap();
@@ -27,19 +26,27 @@ public class ClientReceiveRequestHandler extends ChannelInboundHandlerAdapter {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         ChannelPipeline ch =  socketChannel.pipeline();
-                        ch.addLast(new HttpClientCodec());
+//                        ch.addLast(new HttpClientCodec());
                         ch.addLast(new SendGatewayHandler(channelHandlerContext.channel()));
                     }
                 });
-        System.out.println("向网关发送请求");
-        ChannelFuture future = bootstrap.connect(host, port);
-        future.addListener((ChannelFutureListener) f -> {
-            if (f.isSuccess()){
-                f.channel().writeAndFlush((FullHttpRequest) o);
-            }else {
-                f.channel().close();
+        ChannelFuture future = bootstrap.connect(host, port).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                System.out.println("给网关发送请求");
+                channelFuture.channel().writeAndFlush(o).addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                        if (channelFuture.cause() != null){
+                            System.out.println("发送出现问题");
+                            System.out.println(channelFuture.cause());
+                        }
+                    }
+                });
             }
         });
+
+
     }
 
     @Override
@@ -56,9 +63,11 @@ public class ClientReceiveRequestHandler extends ChannelInboundHandlerAdapter {
             this.clientChannel = clientChannel;
         }
 
+
+
         @Override
         public void channelRead(ChannelHandlerContext channelHandlerContext, Object fullHttpResponse) throws Exception {
-            clientChannel.writeAndFlush((FullHttpResponse) fullHttpResponse);
+            clientChannel.writeAndFlush(fullHttpResponse);
         }
     }
 }

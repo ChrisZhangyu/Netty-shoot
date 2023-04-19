@@ -39,7 +39,7 @@ public class ServerStarter {
 //                            pipeline.addLast("parseHttp", new HttpServerCodec());
 //                            pipeline.addLast(new HttpRequestEncoder());
 //                            pipeline.addLast(new HttpObjectAggregator(65536));
-//                            serverProviderHandlerFactory.channel = ch;
+                            serverProviderHandlerFactory.channel = ch;
                             pipeline.addLast("transferToServer", serverGetHTTPHandlerFactory.getHTTPHandler());
                         } else if (ch.localAddress().getPort() == 8888){
                             System.out.println("创建服务端channel:" + ch.id());
@@ -47,7 +47,7 @@ public class ServerStarter {
 //                            pipeline.addLast("parseHttp", new HttpServerCodec());
 //                            pipeline.addLast(new HttpRequestEncoder());
 //                            pipeline.addLast(new HttpObjectAggregator(65536));
-                            serverGetHTTPHandlerFactory.channel = ch;
+                                serverGetHTTPHandlerFactory.channel = ch;
                             pipeline.addLast("transferToServer", serverProviderHandlerFactory.getHTTPHandler());
 
                         }
