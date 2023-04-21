@@ -12,27 +12,34 @@ import io.netty.handler.codec.http.*;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
 public class ServerGetHTTPHandler extends ChannelInboundHandlerAdapter {
-    public Channel getServerSocketChannel() {
-        return serverChannel;
+
+
+    private ChannelContainer container;
+
+    public void setContainer(ChannelContainer container) {
+        this.container = container;
     }
-
-    public void setServerSocketChannel(Channel serverSocketChannel) {
-        this.serverChannel = serverSocketChannel;
-    }
-
-    private Channel serverChannel;
-
 
     public ServerGetHTTPHandler() {
     }
 
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+        container.registry(ctx.channel(), ChannelType.Request);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+        container.remove(ctx.channel(), ChannelType.Request);
+    }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object httpRequest) throws Exception {
         System.out.println("来自" + ctx.channel().remoteAddress() + "的请求");
-
+        Channel serverChannel = container.getServerChannel(ctx.channel());
         System.out.println("向通道" + serverChannel.id() + "发送请求");
-
         serverChannel.writeAndFlush(httpRequest).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {

@@ -7,11 +7,19 @@ public class ServerProviderHandlerFactory extends ServerHandlerFactory{
     @Override
     public ChannelHandler getHTTPHandler() {
         ServerProviderHandler temp = new ServerProviderHandler();
-        temp.setResponseChannel(this.channel);
+        temp.setContainer(this.channelContainer);
+
         return temp;
     }
 
-    public void setChannel(Channel channel){
-        this.channel = channel;
+    public ServerProviderHandlerFactory() {
+    }
+
+    public ServerProviderHandlerFactory(ChannelContainer channelContainer) {
+        this.channelContainer = channelContainer;
+    }
+
+    public void setChannelContainer(ChannelContainer channelContainer){
+        this.channelContainer = channelContainer;
     }
 }

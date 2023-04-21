@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
 public abstract class ServerHandlerFactory extends ChannelInboundHandlerAdapter {
-    public Channel channel;
+    public ChannelContainer channelContainer;
     public abstract ChannelHandler getHTTPHandler();
 
 }

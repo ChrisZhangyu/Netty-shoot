@@ -22,8 +22,10 @@ public class ServerStarter {
     public void run() throws InterruptedException {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
-        ServerGetHTTPHandlerFactory serverGetHTTPHandlerFactory = new ServerGetHTTPHandlerFactory();
-        ServerProviderHandlerFactory serverProviderHandlerFactory = new ServerProviderHandlerFactory();
+
+        ChannelContainer channelContainer = new ChannelContainer();
+        ServerGetHTTPHandlerFactory serverGetHTTPHandlerFactory = new ServerGetHTTPHandlerFactory(channelContainer);
+        ServerProviderHandlerFactory serverProviderHandlerFactory = new ServerProviderHandlerFactory(channelContainer);
 
         ServerBootstrap sbs = new ServerBootstrap();
         sbs.group(bossGroup, workerGroup)
@@ -39,7 +41,6 @@ public class ServerStarter {
 //                            pipeline.addLast("parseHttp", new HttpServerCodec());
 //                            pipeline.addLast(new HttpRequestEncoder());
 //                            pipeline.addLast(new HttpObjectAggregator(65536));
-                            serverProviderHandlerFactory.channel = ch;
                             pipeline.addLast("transferToServer", serverGetHTTPHandlerFactory.getHTTPHandler());
                         } else if (ch.localAddress().getPort() == 8888){
                             System.out.println("创建服务端channel:" + ch.id());
@@ -47,7 +48,6 @@ public class ServerStarter {
 //                            pipeline.addLast("parseHttp", new HttpServerCodec());
 //                            pipeline.addLast(new HttpRequestEncoder());
 //                            pipeline.addLast(new HttpObjectAggregator(65536));
-                                serverGetHTTPHandlerFactory.channel = ch;
                             pipeline.addLast("transferToServer", serverProviderHandlerFactory.getHTTPHandler());
 
                         }
