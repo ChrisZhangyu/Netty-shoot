@@ -37,6 +37,7 @@ public class ClientStarter {
         future.channel().closeFuture().sync();
     }
 
+
 //    public static void main(String[] args) throws InterruptedException {
 //        new ClientStarter("127.0.0.1", 8888).run();
 //    }

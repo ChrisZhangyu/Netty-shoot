@@ -13,7 +13,7 @@ import java.net.InetSocketAddress;
 
 public class ServerStarter {
     private final int serverProviderPort;
-    private final int requestPort = 80;
+    private final int requestPort = 8889;
 
     public ServerStarter(int serverProviderPort) {
         this.serverProviderPort = serverProviderPort;

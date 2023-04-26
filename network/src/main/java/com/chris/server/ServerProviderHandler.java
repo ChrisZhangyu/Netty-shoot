@@ -29,12 +29,16 @@ public  class ServerProviderHandler extends ChannelInboundHandlerAdapter {
     }
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-            System.out.println("得到返回的数据");
             System.out.println(msg);
-            container.getRequestChannel(ctx.channel()).writeAndFlush(msg);
+            Channel requestChannel = container.getRequestChannel(ctx.channel());
+            System.out.println("已经调用服务得到返回的数据,向请求端channel" + requestChannel + "写回数据");
+
+            requestChannel.writeAndFlush(msg);
     }
 
-
-
-
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
+        System.out.print("返回数据时出错");
+    }
 }

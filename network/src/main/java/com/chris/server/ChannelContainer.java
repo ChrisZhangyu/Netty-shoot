@@ -42,6 +42,7 @@ public class ChannelContainer {
             }
             serverChannels.remove(channel, channel);
         } else if (channelType == ChannelType.Request){
+
             requestChannels.remove(channel, channel);
         }else {
             System.out.println("Channel不符合规范");
@@ -71,10 +72,10 @@ public class ChannelContainer {
 
     public Channel getRequestChannel(Channel serverChannel){
         if (router.get(serverChannel).isEmpty()){
-            System.out.println("当前没有请求需要返回响应");
+            System.out.println("服务端channel对应的请求端channel为空");
             return null;
         }
-       return router.get(serverChannel).removeFirst();
+       return router.get(serverChannel).peekFirst();
     }
 
 }
